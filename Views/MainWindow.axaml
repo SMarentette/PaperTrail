@@ -1,0 +1,320 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:PaperTrail.ViewModels"
+        xmlns:avaloniaEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+        xmlns:html="clr-namespace:TheArtOfDev.HtmlRenderer.Avalonia;assembly=Avalonia.HtmlRenderer"
+        mc:Ignorable="d"
+        x:Class="PaperTrail.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="{Binding WindowTitle}"
+        Width="1450"
+        Height="860"
+        MinWidth="900"
+        MinHeight="560">
+
+    <Window.Styles>
+        <Style Selector="Button.ribbon-btn">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#FCC419"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#00000030"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="CornerRadius" Value="2"/>
+            <Setter Property="MinWidth" Value="24"/>
+            <Setter Property="MinHeight" Value="24"/>
+        </Style>
+        <Style Selector="Button.ribbon-btn:pointerover">
+            <Setter Property="Background" Value="#00000012"/>
+            <Setter Property="BorderBrush" Value="#00000040"/>
+        </Style>
+        <Style Selector="Button.ribbon-btn:pressed">
+            <Setter Property="Background" Value="#00000022"/>
+            <Setter Property="BorderBrush" Value="#00000050"/>
+        </Style>
+
+        <Style Selector="Button.explorer-btn">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#FCC419"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="MinWidth" Value="22"/>
+            <Setter Property="MinHeight" Value="22"/>
+        </Style>
+        <Style Selector="Button.explorer-btn:pointerover">
+            <Setter Property="Background" Value="#00000014"/>
+        </Style>
+
+        <Style Selector="Button.toc-btn">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        <Style Selector="Button.toc-btn:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#00000014"/>
+        </Style>
+    </Window.Styles>
+
+    <Grid RowDefinitions="Auto,*">
+        <Border Grid.Row="0"
+                Background="{Binding ChromeBackground}"
+                BorderBrush="{Binding ChromeBorderBrush}"
+                BorderThickness="0,0,0,1"
+                Padding="4,2">
+            <StackPanel Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+                <Button Classes="ribbon-btn" ToolTip.Tip="Open Markdown File (Ctrl+O)" Click="Open_Click" Width="24" Height="24">
+                    <Image Source="{Binding MarkdownIconSource, Converter={x:Static vm:StringToBitmapConverter.Instance}}" Width="16" Height="16"/>
+                </Button>
+
+                <Button Classes="ribbon-btn" ToolTip.Tip="Save (Ctrl+S)"
+                        IsEnabled="{Binding HasFile}" Click="Save_Click" Width="24" Height="24">
+                    <Image Source="{Binding SaveIconSource, Converter={x:Static vm:StringToBitmapConverter.Instance}}" Width="16" Height="16"/>
+                </Button>
+
+                <Button Classes="ribbon-btn" ToolTip.Tip="New Markdown" Click="New_Click" Width="24" Height="24">
+                    <Image Source="{Binding NewMdIconSource, Converter={x:Static vm:StringToBitmapConverter.Instance}}" Width="16" Height="16"/>
+                </Button>
+
+                <Separator Width="1" Height="20" Margin="4,0" Background="{Binding ChromeBorderBrush}"/>
+
+                <Button Classes="ribbon-btn" ToolTip.Tip="Markdown View Mode"
+                        IsEnabled="{Binding HasFile}" Click="View_Click" Width="24" Height="24">
+                    <Image Source="{Binding EyeIconSource, Converter={x:Static vm:StringToBitmapConverter.Instance}}" Width="16" Height="16"/>
+                </Button>
+
+                <Button Classes="ribbon-btn" ToolTip.Tip="Markdown Edit Mode"
+                        IsEnabled="{Binding HasFile}" Click="Edit_Click" Width="24" Height="24">
+                    <Image Source="{Binding PencilIconSource, Converter={x:Static vm:StringToBitmapConverter.Instance}}" Width="16" Height="16"/>
+                </Button>
+
+                <StackPanel Orientation="Horizontal" IsVisible="{Binding HasFile}">
+                    <Button Classes="ribbon-btn" ToolTip.Tip="Switch to Light Markdown Theme"
+                            IsVisible="{Binding !IsMarkdownLightMode}" Click="ToggleTheme_Click" Width="24" Height="24">
+                        <Image Source="avares://PaperTrail/Assets/light_mode_off_24.png" Width="16" Height="16"/>
+                    </Button>
+
+                    <Button Classes="ribbon-btn" ToolTip.Tip="Switch to Dark Markdown Theme"
+                            IsVisible="{Binding IsMarkdownLightMode}" Click="ToggleTheme_Click" Width="24" Height="24">
+                        <Image Source="avares://PaperTrail/Assets/light_mode_on_24.png" Width="16" Height="16"/>
+                    </Button>
+                </StackPanel>
+
+                <Separator Width="1" Height="20" Margin="4,0" Background="{Binding ChromeBorderBrush}"/>
+
+                <Button Classes="ribbon-btn" ToolTip.Tip="Refresh Explorer"
+                        Command="{Binding RefreshExplorerCommand}" Width="24" Height="24">
+                    <Image Source="{Binding RefreshIconSource, Converter={x:Static vm:StringToBitmapConverter.Instance}}" Width="16" Height="16"/>
+                </Button>
+
+                <TextBlock Text="{Binding StatusMessage}"
+                           Foreground="{Binding ChromeStatusForeground}"
+                           VerticalAlignment="Center"
+                           Margin="10,0,0,0"
+                           FontSize="12"/>
+            </StackPanel>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,4,320">
+            <Border Grid.Column="0" Background="{Binding MarkdownWorkspaceBackground}">
+                <Grid>
+                    <Grid IsVisible="{Binding !HasFile}">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12">
+                            <TextBlock Text="PaperTrail"
+                                       FontSize="36"
+                                       FontWeight="Light"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{Binding ExplorerMetaForeground}"/>
+                            <TextBlock Text="Open or create a markdown file from the explorer."
+                                       HorizontalAlignment="Center"
+                                       Foreground="{Binding ExplorerMetaForeground}"/>
+                            <StackPanel Orientation="Horizontal" Spacing="10" HorizontalAlignment="Center">
+                                <Button Click="Open_Click" Foreground="{Binding AccentForeground}">Open File</Button>
+                                <Button Click="New_Click" Foreground="{Binding AccentForeground}">New Markdown</Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+
+                    <Grid IsVisible="{Binding HasFile}" ColumnDefinitions="220,16,*">
+                        <Border Grid.Column="0"
+                                Background="{Binding SidebarBackground}"
+                                BorderBrush="{Binding SidebarBorderBrush}"
+                                BorderThickness="0,0,1,0"
+                                Padding="8,8,6,8">
+                            <Grid RowDefinitions="Auto,*">
+                                <TextBlock Text="ON THIS PAGE"
+                                           Foreground="{Binding SidebarHeaderForeground}"
+                                           FontSize="11"
+                                           FontWeight="SemiBold"
+                                           LetterSpacing="0.5"
+                                           Margin="4,0,0,8"/>
+
+                                <ScrollViewer Grid.Row="1"
+                                              HorizontalScrollBarVisibility="Disabled"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <ItemsControl ItemsSource="{Binding Headings}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="vm:HeadingItem">
+                                                <Button Classes="toc-btn"
+                                                        Tag="{Binding}"
+                                                        Click="TocButton_Click"
+                                                        HorizontalAlignment="Stretch"
+                                                        Margin="0,1">
+                                                    <TextBlock Text="{Binding Text}"
+                                                               Foreground="{Binding $parent[Window].DataContext.TocForeground}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               FontSize="12"/>
+                                                </Button>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </ScrollViewer>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="1" Background="{Binding MarkdownWorkspaceBackground}"/>
+
+                        <Grid Grid.Column="2">
+                            <Grid IsVisible="{Binding IsEditMode}" ColumnDefinitions="3*,4,5*">
+                                <Border Grid.Column="0" Background="{Binding EditorBackground}">
+                                    <avaloniaEdit:TextEditor x:Name="MarkdownEditor"
+                                                             ShowLineNumbers="True"
+                                                             Document="{Binding MarkdownDocument}"
+                                                             FontFamily="Cascadia Code, Consolas, Courier New, monospace"
+                                                             FontSize="14"
+                                                             WordWrap="True"/>
+                                </Border>
+
+                                <GridSplitter Grid.Column="1"
+                                              Width="4"
+                                              HorizontalAlignment="Stretch"
+                                              ResizeDirection="Columns"
+                                              Background="{Binding MarkdownSplitBrush}"/>
+
+                                <Border Grid.Column="2" Background="{Binding MarkdownWorkspaceBackground}">
+                                    <ScrollViewer x:Name="PreviewEditScrollViewer"
+                                                  Background="{Binding MarkdownWorkspaceBackground}"
+                                                  HorizontalScrollBarVisibility="Auto"
+                                                  VerticalScrollBarVisibility="Auto">
+                                        <html:HtmlPanel Text="{Binding RenderedHtml}"/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Grid>
+
+                            <Border IsVisible="{Binding IsViewMode}" Background="{Binding MarkdownWorkspaceBackground}">
+                                <ScrollViewer x:Name="PreviewViewScrollViewer"
+                                              Background="{Binding MarkdownWorkspaceBackground}"
+                                              HorizontalScrollBarVisibility="Auto"
+                                              VerticalScrollBarVisibility="Auto">
+                                    <html:HtmlPanel Text="{Binding RenderedHtml}"/>
+                                </ScrollViewer>
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="1"
+                          Width="4"
+                          HorizontalAlignment="Stretch"
+                          ResizeDirection="Columns"
+                          Background="{Binding ChromeBorderBrush}"/>
+
+            <Border Grid.Column="2" Background="{Binding ExplorerPanelBackground}">
+                <Grid RowDefinitions="Auto,Auto,*,Auto">
+                    <Border Grid.Row="0" Background="{Binding ExplorerPanelBackground}" Padding="12,8">
+                        <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto">
+                            <TextBlock Grid.Column="0"
+                                       Text="EXPLORER"
+                                       FontSize="11"
+                                       FontWeight="SemiBold"
+                                       Foreground="{Binding ExplorerHeaderForeground}"
+                                       VerticalAlignment="Center"
+                                       LetterSpacing="0.5"/>
+                            <Button Grid.Column="1"
+                                    Classes="explorer-btn"
+                                    ToolTip.Tip="Open Folder"
+                                    Click="OpenFolder_Click"
+                                    Margin="0,0,4,0">
+                                <Image Source="{Binding OpenFileIconSource, Converter={x:Static vm:StringToBitmapConverter.Instance}}"
+                                       Width="14"
+                                       Height="14"/>
+                            </Button>
+                            <Button Grid.Column="2"
+                                    Classes="explorer-btn"
+                                    ToolTip.Tip="Create Directory"
+                                    Command="{Binding CreateDirectoryCommand}"
+                                    Margin="0,0,4,0">
+                                <StackPanel Orientation="Horizontal" Spacing="2">
+                                    <TextBlock Text="+" FontSize="12" FontWeight="Bold" VerticalAlignment="Center"
+                                               Foreground="{Binding ExplorerItemForeground}"/>
+                                    <Image Source="{Binding FolderIconSource, Converter={x:Static vm:StringToBitmapConverter.Instance}}"
+                                           Width="14"
+                                           Height="14"
+                                           VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                            <Button Grid.Column="3"
+                                    Classes="explorer-btn"
+                                    ToolTip.Tip="Delete Selected"
+                                    Command="{Binding DeleteSelectedItemCommand}"
+                                    Margin="0,0,4,0">
+                                <Image Source="{Binding DeleteIconSource, Converter={x:Static vm:StringToBitmapConverter.Instance}}"
+                                       Width="14"
+                                       Height="14"/>
+                            </Button>
+                            <Button Grid.Column="4"
+                                    Classes="explorer-btn"
+                                    ToolTip.Tip="Refresh"
+                                    Command="{Binding RefreshExplorerCommand}">
+                                <Image Source="{Binding RefreshIconSource, Converter={x:Static vm:StringToBitmapConverter.Instance}}"
+                                       Width="14"
+                                       Height="14"/>
+                            </Button>
+                        </Grid>
+                    </Border>
+
+                    <Border Grid.Row="1" Background="{Binding ExplorerSectionBackground}" Padding="8,6" BorderBrush="{Binding ChromeBorderBrush}" BorderThickness="0,1">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <TextBlock Text=">" Foreground="{Binding ExplorerItemForeground}" FontSize="10" VerticalAlignment="Center"/>
+                            <TextBlock Text="MARKDOWN" FontSize="11" Foreground="{Binding ExplorerItemForeground}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TreeView Grid.Row="2"
+                              x:Name="ExplorerTreeView"
+                              ItemsSource="{Binding ExplorerItems}"
+                              SelectedItem="{Binding SelectedExplorerItem, Mode=TwoWay}"
+                              Background="Transparent"
+                              Margin="0"
+                              SelectionMode="Single"
+                              DoubleTapped="ExplorerTreeView_DoubleTapped"
+                              KeyDown="ExplorerTreeView_KeyDown">
+                        <TreeView.ItemTemplate>
+                            <TreeDataTemplate ItemsSource="{Binding Children}" DataType="vm:MarkdownExplorerItem">
+                                <StackPanel Orientation="Horizontal" Spacing="6" Margin="4,2">
+                                    <Image Width="16" Height="16" VerticalAlignment="Center">
+                                        <Image.Source>
+                                            <MultiBinding Converter="{x:Static vm:ExplorerItemIconConverter.Instance}">
+                                                <Binding Path="IsCategory"/>
+                                                <Binding Path="$parent[Window].DataContext.FolderIconSource"/>
+                                                <Binding Path="$parent[Window].DataContext.MarkdownIconSource"/>
+                                            </MultiBinding>
+                                        </Image.Source>
+                                    </Image>
+                                    <TextBlock Text="{Binding Name}"
+                                               Foreground="{Binding $parent[Window].DataContext.ExplorerItemForeground}"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"
+                                               TextTrimming="CharacterEllipsis"/>
+                                </StackPanel>
+                            </TreeDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

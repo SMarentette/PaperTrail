@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36408.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaperTrail", "PaperTrail.csproj", "{FFD37E1C-E1B1-EF82-60EF-3B6AEE2D3350}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaperTrail.Desktop", "..\PaperTrail.Desktop\PaperTrail.Desktop.csproj", "{CC5807F6-6698-905F-5332-AC6529A39D7D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FFD37E1C-E1B1-EF82-60EF-3B6AEE2D3350}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFD37E1C-E1B1-EF82-60EF-3B6AEE2D3350}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFD37E1C-E1B1-EF82-60EF-3B6AEE2D3350}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD37E1C-E1B1-EF82-60EF-3B6AEE2D3350}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC5807F6-6698-905F-5332-AC6529A39D7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC5807F6-6698-905F-5332-AC6529A39D7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC5807F6-6698-905F-5332-AC6529A39D7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC5807F6-6698-905F-5332-AC6529A39D7D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3F268B76-40CD-4BB1-A44B-D4BE7353442F}
+	EndGlobalSection
+EndGlobal
