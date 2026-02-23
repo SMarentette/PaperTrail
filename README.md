@@ -20,7 +20,8 @@ PaperTrail is a standalone markdown viewer/editor built with Avalonia.
 - The app shell is theme-aware (ribbon, explorer, sidebar, editor workspace).
 
 ## Demo Video
-<video src="Assets/PaperTrail.mp4" controls width="960"></video>
+[![PaperTrail Demo](Assets/PaperTrail.gif)](Assets/PaperTrail.mp4)
+
 
 ## How to Use
 ```bash
