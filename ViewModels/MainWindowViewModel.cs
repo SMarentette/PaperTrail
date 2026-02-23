@@ -173,6 +173,9 @@ public partial class MainWindowViewModel : ObservableObject
 
         MarkdownDocument.TextChanged += OnMarkdownDocumentTextChanged;
 
+        MarkdownPathConfig.EnsureAppDataFiles();
+        var settings = MarkdownPathConfig.LoadSettings();
+        MarkdownRootPath = settings.MarkdownRootPath;
         EnsureMarkdownRoot();
         LoadExplorer();
     }

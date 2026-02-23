@@ -53,7 +53,7 @@ public partial class MainWindowViewModel
         IsMarkdownLightMode = !IsMarkdownLightMode;
     }
 
-    public async Task OpenFileAsync(string path)
+    public async Task OpenFileAsync(string path, bool persistOpenedFileFolder = true)
     {
         if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
         {
@@ -70,6 +70,14 @@ public partial class MainWindowViewModel
         }
 
         var content = await File.ReadAllTextAsync(path);
+
+        var containingDirectory = Path.GetDirectoryName(path);
+        if (persistOpenedFileFolder
+            && !string.IsNullOrWhiteSpace(containingDirectory)
+            && !PathEquals(MarkdownRootPath, containingDirectory))
+        {
+            SetMarkdownRootPath(containingDirectory);
+        }
 
         _isUpdatingText = true;
         MarkdownText = content;

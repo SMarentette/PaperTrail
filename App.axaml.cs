@@ -36,7 +36,7 @@ public partial class App : Application
 
             if (filePath != null)
             {
-                mainWindow.Opened += async (_, _) => await viewModel.OpenFileAsync(filePath);
+                mainWindow.Opened += async (_, _) => await viewModel.OpenFileAsync(filePath, persistOpenedFileFolder: false);
             }
         }
 
